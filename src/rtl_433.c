@@ -1846,6 +1846,10 @@ int main(int argc, char **argv) {
                 demod->sample_file_pos = ((float)n_blocks * DEFAULT_BUF_LENGTH + n_read) / cfg->samp_rate / demod->sample_size;
                 n_blocks++; // this assumes n_read == DEFAULT_BUF_LENGTH
                 process_sdr_frame(cfg, test_mode_buf, n_read);
+                // live stdin stream: service network outputs (MQTT, HTTP, ...)
+                if (in_file == stdin) {
+                    mg_mgr_poll(cfg->mgr, 0);
+                }
             } while (n_read != 0 && !cfg->exit_async);
 
             // Flush to ensure EOP detection
